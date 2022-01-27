@@ -44,3 +44,27 @@ func (h *userHandler) RegisterUser(c *gin.Context) {
 
 	c.JSON(http.StatusOK, response)
 }
+
+func (h *userHandler) Login(c *gin.Context) {
+	var input users.LoginInput
+	err := c.ShouldBindJSON(&input)
+	response := helpers.ApiResponse("Opps, something error", http.StatusBadRequest, nil)
+
+	if err != nil {
+		response.Meta.Errors = helpers.ValidatorError(err)
+		response.Meta.Code = http.StatusUnprocessableEntity
+		c.JSON(http.StatusUnprocessableEntity, response)
+		return
+	}
+
+	userLogged, err := h.userService.Login(input)
+	if err != nil {
+		response.Meta.Errors = err.Error()
+		c.JSON(http.StatusBadRequest, response)
+		return
+	}
+
+	userForm := users.UserFormat(userLogged, "tokenlogin")
+	response = helpers.ApiResponse("Login succes", http.StatusOK, userForm)
+	c.JSON(http.StatusOK, response)
+}

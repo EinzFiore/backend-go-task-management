@@ -7,3 +7,8 @@ type RegisterInput struct {
 	Avatar      string `json:"avatar" binding:"required"`
 	Description string `json:"description" binding:"required"`
 }
+
+type LoginInput struct {
+	Email    string `json:"email" binding:"required,email"`
+	Password string `json:"password" binding:"required"`
+}
