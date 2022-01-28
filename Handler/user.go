@@ -2,11 +2,13 @@ package handler
 
 import (
 	users "crowdfunding/Users"
+	"errors"
 	"net/http"
 
 	helpers "crowdfunding/Helpers"
 
 	"github.com/gin-gonic/gin"
+	"gorm.io/gorm"
 )
 
 type userHandler struct {
@@ -66,5 +68,36 @@ func (h *userHandler) Login(c *gin.Context) {
 
 	userForm := users.UserFormat(userLogged, "tokenlogin")
 	response = helpers.ApiResponse("Login succes", http.StatusOK, userForm)
+	c.JSON(http.StatusOK, response)
+}
+
+func (h *userHandler) CheckEmailAvailability(c *gin.Context) {
+	var input users.CheckEmailInput
+
+	err := c.ShouldBindJSON(&input)
+	response := helpers.ApiResponse("Opps, something error", http.StatusBadRequest, nil)
+	if err != nil {
+		response.Meta.Errors = helpers.ValidatorError(err)
+		response.Meta.Code = http.StatusUnprocessableEntity
+		c.JSON(http.StatusUnprocessableEntity, response)
+		return
+	}
+
+	resEmail, err := h.userService.IsEmailAvailable(input)
+	if err != nil {
+		response.Meta.Errors = err.Error()
+		if errors.Is(err, gorm.ErrRecordNotFound) == false {
+			c.JSON(http.StatusUnprocessableEntity, response)
+			return
+		}
+	}
+
+	metaMessage := "email is available"
+	if resEmail {
+		metaMessage = "Email has been registered"
+	}
+
+	response = helpers.ApiResponse(metaMessage, http.StatusOK, resEmail)
+
 	c.JSON(http.StatusOK, response)
 }
