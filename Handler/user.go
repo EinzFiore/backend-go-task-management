@@ -3,6 +3,7 @@ package handler
 import (
 	users "crowdfunding/Users"
 	"errors"
+	"fmt"
 	"net/http"
 
 	helpers "crowdfunding/Helpers"
@@ -99,5 +100,46 @@ func (service *userHandler) CheckEmailAvailability(c *gin.Context) {
 
 	response = helpers.ApiResponse(metaMessage, http.StatusOK, resEmail)
 
+	c.JSON(http.StatusOK, response)
+}
+
+func (service *userHandler) UploadAvatar(c *gin.Context) {
+	file, err := c.FormFile("avatar")
+	response := helpers.ApiResponse("Opps, something error", http.StatusBadRequest, nil)
+
+	if err != nil {
+		response.Meta.Errors = err.Error()
+		response.Data = false
+		c.JSON(http.StatusBadRequest, response)
+		return
+	}
+
+	// hardcode user id, next will get from JWT
+	userID := 1
+
+	path := fmt.Sprintf("images/%d-%s", userID, file.Filename)
+
+	err = c.SaveUploadedFile(file, path)
+
+	if err != nil {
+		response.Meta.Message = "Failed to upload avatar"
+		response.Meta.Errors = err.Error()
+		response.Data = false
+
+		c.JSON(http.StatusBadRequest, response)
+		return
+	}
+
+	_, err = service.userService.SaveAvatar(userID, path)
+	if err != nil {
+		response.Meta.Message = "Failed to upload avatar"
+		response.Meta.Errors = err.Error()
+		response.Data = false
+
+		c.JSON(http.StatusBadRequest, response)
+		return
+	}
+
+	response = helpers.ApiResponse("Success upload avatar", http.StatusOK, true)
 	c.JSON(http.StatusOK, response)
 }
