@@ -19,7 +19,7 @@ func NewUserHandler(userService users.Service) *userHandler {
 	return &userHandler{userService}
 }
 
-func (h *userHandler) RegisterUser(c *gin.Context) {
+func (service *userHandler) RegisterUser(c *gin.Context) {
 	var input users.RegisterInput
 
 	err := c.ShouldBindJSON(&input)
@@ -32,7 +32,7 @@ func (h *userHandler) RegisterUser(c *gin.Context) {
 		return
 	}
 
-	user, err := h.userService.RegisterUser(input)
+	user, err := service.userService.RegisterUser(input)
 	if err != nil {
 		response.Meta.Message = "Failed register account"
 		response.Meta.Errors = err.Error()
@@ -47,7 +47,7 @@ func (h *userHandler) RegisterUser(c *gin.Context) {
 	c.JSON(http.StatusOK, response)
 }
 
-func (h *userHandler) Login(c *gin.Context) {
+func (service *userHandler) Login(c *gin.Context) {
 	var input users.LoginInput
 	err := c.ShouldBindJSON(&input)
 	response := helpers.ApiResponse("Opps, something error", http.StatusBadRequest, nil)
@@ -59,7 +59,7 @@ func (h *userHandler) Login(c *gin.Context) {
 		return
 	}
 
-	userLogged, err := h.userService.Login(input)
+	userLogged, err := service.userService.Login(input)
 	if err != nil {
 		response.Meta.Errors = err.Error()
 		c.JSON(http.StatusBadRequest, response)
@@ -71,7 +71,7 @@ func (h *userHandler) Login(c *gin.Context) {
 	c.JSON(http.StatusOK, response)
 }
 
-func (h *userHandler) CheckEmailAvailability(c *gin.Context) {
+func (service *userHandler) CheckEmailAvailability(c *gin.Context) {
 	var input users.CheckEmailInput
 
 	err := c.ShouldBindJSON(&input)
@@ -83,7 +83,7 @@ func (h *userHandler) CheckEmailAvailability(c *gin.Context) {
 		return
 	}
 
-	resEmail, err := h.userService.IsEmailAvailable(input)
+	resEmail, err := service.userService.IsEmailAvailable(input)
 	if err != nil {
 		response.Meta.Errors = err.Error()
 		if errors.Is(err, gorm.ErrRecordNotFound) == false {
