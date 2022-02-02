@@ -1,5 +1,9 @@
 package users
 
+import (
+	Model "crowdfunding/Model"
+)
+
 type UserFormatter struct {
 	ID          int    `json:"id"`
 	Fullname    string `json:"fullname"`
@@ -9,7 +13,7 @@ type UserFormatter struct {
 	Token       string `json:"token"`
 }
 
-func UserFormat(user User, token string) UserFormatter {
+func UserFormat(user Model.User, token string) UserFormatter {
 	resFormat := UserFormatter{
 		ID:          user.Id,
 		Fullname:    user.Fullname,

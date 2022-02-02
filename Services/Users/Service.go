@@ -1,17 +1,18 @@
 package users
 
 import (
+	Model "crowdfunding/Model"
 	"time"
 
 	"golang.org/x/crypto/bcrypt"
 )
 
 type Service interface {
-	RegisterUser(input RegisterInput) (User, error)
-	Login(input LoginInput) (User, error)
+	RegisterUser(input RegisterInput) (Model.User, error)
+	Login(input LoginInput) (Model.User, error)
 	IsEmailAvailable(input CheckEmailInput) (bool, error)
-	SaveAvatar(ID int, fileLocation string) (User, error)
-	GetUserByID(ID int) (User, error)
+	SaveAvatar(ID int, fileLocation string) (Model.User, error)
+	GetUserByID(ID int) (Model.User, error)
 }
 
 type service struct {
@@ -22,8 +23,8 @@ func NewService(repository Repository) *service {
 	return &service{repository}
 }
 
-func (s *service) RegisterUser(input RegisterInput) (User, error) {
-	user := User{}
+func (s *service) RegisterUser(input RegisterInput) (Model.User, error) {
+	user := Model.User{}
 	user.Fullname = input.Fullname
 	user.Email = input.Email
 	user.Avatar = input.Avatar
@@ -44,7 +45,7 @@ func (s *service) RegisterUser(input RegisterInput) (User, error) {
 	return newUser, nil
 }
 
-func (s *service) Login(input LoginInput) (User, error) {
+func (s *service) Login(input LoginInput) (Model.User, error) {
 	email := input.Email
 	password := input.Password
 
@@ -75,7 +76,7 @@ func (s *service) IsEmailAvailable(input CheckEmailInput) (bool, error) {
 	return true, nil
 }
 
-func (s *service) SaveAvatar(id int, fileLocation string) (User, error) {
+func (s *service) SaveAvatar(id int, fileLocation string) (Model.User, error) {
 	user, err := s.repository.FindByID(id)
 	if err != nil {
 		return user, err
@@ -91,7 +92,7 @@ func (s *service) SaveAvatar(id int, fileLocation string) (User, error) {
 	return updatedUser, nil
 }
 
-func (s *service) GetUserByID(id int) (User, error) {
+func (s *service) GetUserByID(id int) (Model.User, error) {
 	user, err := s.repository.FindByID(id)
 	if err != nil {
 		return user, err

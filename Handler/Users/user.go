@@ -2,7 +2,8 @@ package handler
 
 import (
 	auth "crowdfunding/Auth"
-	users "crowdfunding/Users"
+	Model "crowdfunding/Model"
+	users "crowdfunding/Services/Users"
 	"errors"
 	"fmt"
 	"net/http"
@@ -18,7 +19,7 @@ type userHandler struct {
 	authService auth.Service
 }
 
-func NewUserHandler(userService users.Service, authServuce auth.Service) *userHandler {
+func NewUserHandler(userService users.Service, authServuce auth.Service) UserHandler {
 	return &userHandler{userService, authServuce}
 }
 
@@ -133,7 +134,8 @@ func (service *userHandler) UploadAvatar(c *gin.Context) {
 	}
 
 	// hardcode user id, next will get from JWT
-	currentUser := c.MustGet("currentUser").(users.User)
+	currentUser := c.MustGet("currentUser").(Model.User)
+
 	userID := currentUser.Id
 
 	path := fmt.Sprintf("images/%d-%s", userID, file.Filename)
