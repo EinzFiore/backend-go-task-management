@@ -1,8 +1,8 @@
 package main
 
 import (
-	auth "crowdfunding/Auth"
 	handler "crowdfunding/Handler/Users"
+	auth "crowdfunding/Services/Auth"
 	users "crowdfunding/Services/Users"
 	"crowdfunding/database"
 	"crowdfunding/routes"
