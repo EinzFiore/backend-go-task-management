@@ -1,8 +1,8 @@
 package handler
 
 import (
-	auth "crowdfunding/Auth"
 	Model "crowdfunding/Model"
+	auth "crowdfunding/Services/Auth"
 	users "crowdfunding/Services/Users"
 	"errors"
 	"fmt"

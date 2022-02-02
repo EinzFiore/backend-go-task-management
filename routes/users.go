@@ -1,9 +1,9 @@
 package routes
 
 import (
-	auth "crowdfunding/Auth"
 	handler "crowdfunding/Handler/Users"
 	middleware "crowdfunding/Middleware"
+	auth "crowdfunding/Services/Auth"
 	users "crowdfunding/Services/Users"
 
 	"github.com/gin-gonic/gin"

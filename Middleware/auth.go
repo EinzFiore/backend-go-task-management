@@ -1,8 +1,8 @@
 package middleware
 
 import (
-	auth "crowdfunding/Auth"
 	helpers "crowdfunding/Helpers"
+	auth "crowdfunding/Services/Auth"
 	users "crowdfunding/Services/Users"
 	"net/http"
 	"strings"
